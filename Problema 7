@@ -1,0 +1,186 @@
+#include <iostream>
+#include <windows.h>
+#include <string>
+#include <cstdlib>
+// Clase Alumno
+class Alumno {
+    private:
+    //Atributos
+    std::string Nombre;
+    std::string Carrera;
+    int MateriasAP;
+    float Promedio;       
+    public:
+
+    //Metodos
+    Alumno( const std::string N = "", const std::string C = "", int MAP = 0, float Prom = 0.0) {
+        Nombre = N; Carrera = C; MateriasAP = MAP; Promedio = Prom;
+    }
+
+    void SetNombre(std::string N){Nombre=N;}
+    std::string getNombre(){return Nombre;}  
+    void SetCarrera(std::string C){Carrera=C;}
+    std::string getDomicilio(){return Carrera;}
+    void SetMateria(int MAP){MateriasAP=MAP;}
+    int getMateria(){return MateriasAP;}
+    void SetPromedio(float Prom){Promedio=Prom;}
+    float getPromedio(){return Promedio;}
+
+    //Sobrecarga << >>
+    friend std::ostream& operator<<(std::ostream& o, const Alumno& alumno) {
+        o << "Nombre: " << alumno.Nombre << std::endl;
+        o << "Carrera: " << alumno.Carrera << std::endl;
+        o << "Materia: " << alumno.MateriasAP << std::endl;
+        o << "Promedio: " << alumno.Promedio << std::endl;
+        return o;
+    }
+
+    friend std::istream& operator>>(std::istream& i, Alumno& alumno) {
+        std::cout << "Ingrese el nombre del alumno/a: ";
+        i.ignore();
+        std::getline(i, alumno.Nombre);
+        std::cout << "Ingrese la Carrera: ";
+        std::getline(i, alumno.Carrera);
+        std::cout << "Ingrese las materias aprobadas: ";
+        i >> alumno.MateriasAP;
+        std::cout << "Ingrese el Promedio: ";
+        i.ignore();
+        i >> alumno.Promedio;
+        return i;
+    }
+        void Imprime(){
+        std::cout << "Nombre: " << Nombre << std::endl;
+        std::cout << "Carrera: " << Carrera << std::endl;
+        std::cout << "Materia: " << MateriasAP << std::endl;
+        std::cout << "Promedio: " << Promedio << std::endl;
+    }
+};
+
+const int MAX = 10;
+
+class Cola{
+    private: 
+    Alumno Datos[MAX];
+    int TAM;
+    int Front;
+    int End;
+
+    public:
+    Cola() : Front(0), End(0) {}
+
+    bool vacia() const {
+        return Front == End;
+    }
+
+    bool llena() const {
+        return (End + 1) % MAX == Front;
+    }
+
+    void enqueue(const Alumno& alumno){
+        if (!llena()) {
+            Datos[End] = alumno;
+            End = (End + 1) % MAX;
+        } else {
+            std::cout << "La cola esta llena " << std::endl;
+        }
+    }
+
+    Alumno dequeue(){
+        if(!vacia()) {
+            Alumno alumno = Datos[Front];
+            Front = (Front + 1) % MAX;
+            return alumno;
+        } else {
+            std::cout << "La cola esta vacia " << std::endl;
+            return Alumno();
+        }
+    }
+
+    void mostrar() const {
+        if (vacia()) {
+            std::cout << "La cola esta vacia" << std::endl;
+            return;
+        }
+        std::cout << "Elementos en la cola:" << std::endl;
+        for (int i = Front; i != End; i = (i + 1) % MAX) {
+        std::cout << Datos[i] << std::endl;
+    }
+} 
+ 
+};
+
+void mostrarMenu() {
+    std::cout << "\n\tMenu:\n";
+    std::cout << "\t1. Alta solicitud\n";
+    std::cout << "\t2. Hacer constancia\n";
+    std::cout << "\t3. Mostrar todos los alumnos\n";
+    std::cout << "\t0. Salir\n";
+    std::cout << "\tIngrese su opcion: ";
+}
+
+int main() {
+    Cola queuecola;
+    int opcion;
+
+    do {
+        system("cls"); 
+        system("Color F0"); 
+        mostrarMenu();
+        std::cin >> opcion;
+
+        switch (opcion) {
+            case 1: {  
+                system("cls");
+                if (queuecola.llena()) {
+                    std::cout << "La cola esta llena" << std::endl;
+                    system("Color 4F");
+                    Sleep(2500);
+                } else {
+                    Alumno nuevoAlumno;
+                    std::cin >> nuevoAlumno;
+                    queuecola.enqueue(nuevoAlumno);
+                    std::cout << "Alumno agregado" << std::endl;
+                }
+                system("pause");
+                break;
+            }
+
+            case 2: {
+                system("cls");
+                if (!queuecola.vacia()) {
+                    Alumno AlumnoEliminado = queuecola.dequeue();
+                    std::cout << "La constancia es:" << std::endl;
+                    AlumnoEliminado.Imprime();
+                } else {
+                    std::cout << "La cola esta vacia" << std::endl;
+                    system("Color 4F");
+                    Sleep(2500);
+                }
+                system("pause");
+                break;
+            }
+
+            case 3: { 
+                system("cls");
+                queuecola.mostrar();
+                system("pause");
+                break;
+            }
+
+            case 0: {  
+                std::cout << "Gracias por usar" << std::endl;
+                break;
+            }
+
+            default: {
+                system("cls");
+                std::cout << "Opcion invalida" << std::endl;
+                system("Color 4F");
+                Sleep(2500);
+            }
+        }
+
+    } while (opcion != 0);
+
+    return 0;
+}
